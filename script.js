@@ -44,6 +44,7 @@ function updatePickupLocation(lat, lng) {
                 `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
         });
 }
+
 async function fetchNearbyHospitals(lat, lng) {
     const radius = 10000;
     const query = `[out:json];
@@ -122,11 +123,26 @@ function handleBooking() {
         return;
     }
 
-    alert(`Ambulance booked successfully!\n
-Name: ${fullName}\n
-Phone: ${phone}\n
-Pickup: ${pickup}\n
-Destination: ${destination}`);
+    fetch('http://localhost:3000/book-ambulance', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            fullName,
+            phone,
+            pickup,
+            destination
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(data.message || 'Ambulance booked successfully!');
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Something went wrong. Please try again.');
+    });
 }
 
 // Initialize application
